@@ -16,7 +16,7 @@ def load_data(file_path):
 
 
 def get_information(animals_data: list[dict]) -> str:
-    """ Gets the required characteristics out of a data file and returns them in a string for html """
+    """ Gets the required characteristics out of a data file and returns them in a string for html output """
     information = ""
 
     for animal in animals_data:
@@ -31,12 +31,13 @@ def get_information(animals_data: list[dict]) -> str:
         type_ = characteristics.get("type", "/")
 
         #file modulation
-        information += f"Name: {name}\nDiet: {diet}\nLocation: {location}\nLocation: {location}\n"
+        information += '<li class="cards__item">'
+        information += f"Name: {name}<br/>\nDiet: {diet}<br/>\nLocation: {location}<br/>\nLocation: {location}<br/>\n"
 
         if type_ != "/":
-            information += f"Type: {type_}\n"
+            information += f"Type: {type_}<br/>\n"
 
-        information += f"\n"
+        information += f"</li>\n"
 
     return information
 
