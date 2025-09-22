@@ -15,6 +15,35 @@ def load_data(file_path):
         return json.load(handle)
 
 
+def serialize_animal(animal: dict, animal_name: str) -> str:
+    """ helper for get_information: serializes the data for a single animal as a html object """
+    result_animal = ""
+
+    #gets the interesting information
+    location = animal.get("locations", ["/"])[0]
+    characteristics = animal.get("characteristics", {})
+    diet = characteristics.get("diet", "/")
+    type_ = characteristics.get("type", "/")
+
+    # file modulation to html objects inside a string
+    result_animal += (f'<li class="cards__item">'
+                      f'<div class="card__title">{animal_name}</div>'
+                      f'<p class="card__text">')
+
+    # adding list with data
+    result_animal += (f"<strong>Diet:</strong> {diet}<br/>\n"
+                      f"<strong>Location:</strong> {location}<br/>\n")
+
+    # checking if animal for the list has a type
+    if type_ != "/":
+        result_animal += f"<strong>Type:</strong> {type_}<br/>\n"
+
+    # end of file
+    result_animal += f"</p>\n</li>\n"
+
+    return result_animal
+
+
 def get_information(animals_data: list[dict]) -> str:
     """ Gets the required characteristics out of a data file and returns them in a string for html output """
     information = ""
@@ -25,26 +54,8 @@ def get_information(animals_data: list[dict]) -> str:
         if name is None:  # skips the complete animal if the name doesn't exist
             continue
 
-        location = animal.get("locations", ["/"])[0]
-        characteristics = animal.get("characteristics", {})
-        diet = characteristics.get("diet", "/")
-        type_ = characteristics.get("type", "/")
-
-        #file modulation to html objects inside a string
-        information += (f'<li class="cards__item">'
-                        f'<div class="card__title">{name}</div>'
-                        f'<p class="card__text">')
-
-        #adding list with data
-        information += (f"<strong>Diet:</strong> {diet}<br/>\n"
-                        f"<strong>Location:</strong> {location}<br/>\n")
-
-        #checking if animal for the list has a type
-        if type_ != "/":
-            information += f"<strong>Type:</strong> {type_}<br/>\n"
-
-        #end of file
-        information += f"</p>\n</li>\n"
+        #adding animal to our html string
+        information += serialize_animal(animal, name)
 
     return information
 
