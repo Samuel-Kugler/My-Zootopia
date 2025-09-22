@@ -30,14 +30,21 @@ def get_information(animals_data: list[dict]) -> str:
         diet = characteristics.get("diet", "/")
         type_ = characteristics.get("type", "/")
 
-        #file modulation
-        information += '<li class="cards__item">'
-        information += f"Name: {name}<br/>\nDiet: {diet}<br/>\nLocation: {location}<br/>\nLocation: {location}<br/>\n"
+        #file modulation to html objects inside a string
+        information += (f'<li class="cards__item">'
+                        f'<div class="card__title">{name}</div>'
+                        f'<p class="card__text">')
 
+        #adding list with data
+        information += (f"<strong>Diet:</strong> {diet}<br/>\n"
+                        f"<strong>Location:</strong> {location}<br/>\n")
+
+        #checking if animal for the list has a type
         if type_ != "/":
-            information += f"Type: {type_}<br/>\n"
+            information += f"<strong>Type:</strong> {type_}<br/>\n"
 
-        information += f"</li>\n"
+        #end of file
+        information += f"</p>\n</li>\n"
 
     return information
 
