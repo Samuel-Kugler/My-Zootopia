@@ -1,26 +1,55 @@
 import json
+from json import JSONDecodeError
 
 
 def read_html_file() -> str:
-    """ Loads a html file """
-    with open("animals_template.html", "r") as html_file:
-        content = html_file.read()
+    """
+    Loads a html file template.
+     return: str
+    """
+    try:
+        with open("animals_template.html", "r") as html_file:
+            content = html_file.read()
+    except FileNotFoundError:
+        content =
 
     return content
 
 
-def load_data(file_path):
-    """ Loads a JSON file """
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+def load_data(file_path) -> list[dict]:
+    """
+    Loads a JSON file and returns its data.
+    return: list[dict]
+    """
+    try:
+        with open(file_path, "r") as handle:
+            json_file = json.load(handle)
+    except FileNotFoundError:
+        json_file = [{"name": "Error!", "characteristics": {"type": "File can't be found."}}]
+    except JSONDecodeError:
+        json_file = [{"name": "Error!", "characteristics": {"type": "File is corrupted."}}]
+    except UnicodeDecodeError:
+        json_file = [{"name": "Error!", "characteristics": {"type": "File can't be encoded."}}]
+
+    return json_file
 
 
 def serialize_animal(animal: dict, animal_name: str) -> str:
-    """ helper for get_information: serializes the data for a single animal as a html object """
+    """
+    helper for get_information: serializes the data for a single animal as a html object.
+    Args:
+        animal: dict
+        animal_name: str
+    return: str
+    """
     result_animal = ""
 
     #gets the interesting information
-    location = animal.get("locations", ["/"])[0]
+    pre_location = animal.get("locations", ["/"])
+    location = "/"
+    if len(pre_location) > 0:
+        location = pre_location[0]
+
     characteristics = animal.get("characteristics", {})
     diet = characteristics.get("diet", "/")
     type_ = characteristics.get("type", "/")
@@ -30,9 +59,13 @@ def serialize_animal(animal: dict, animal_name: str) -> str:
                       f'<div class="card__title">{animal_name}</div>'
                       f'<p class="card__text">')
 
-    # adding list with data
-    result_animal += (f"<strong>Diet:</strong> {diet}<br/>\n"
-                      f"<strong>Location:</strong> {location}<br/>\n")
+    # checking if animal for the list has a diet
+    if diet != "/":
+        result_animal += f"<strong>Diet:</strong> {diet}<br/>\n"
+
+    # checking if animal for the list has a location
+    if location != "/":
+        result_animal += f"<strong>Location:</strong> {location}<br/>\n"
 
     # checking if animal for the list has a type
     if type_ != "/":
@@ -45,7 +78,12 @@ def serialize_animal(animal: dict, animal_name: str) -> str:
 
 
 def get_information(animals_data: list[dict]) -> str:
-    """ Gets the required characteristics out of a data file and returns them in a string for html output """
+    """
+    Gets the required characteristics out of a data file and returns them in a string for html output.
+    Args:
+        animals_data: lsts[dict]
+    return: str
+    """
     information = ""
 
     for animal in animals_data:
@@ -61,14 +99,24 @@ def get_information(animals_data: list[dict]) -> str:
 
 
 def create_file_text(html_info: str, animal_info: str) -> str:
-    """ Creates the content for the new html file by adding content to a template """
+    """
+     Creates the content for the new html file by adding content to a template.
+     Args:
+          html_info: str
+          animal_info: str
+    return: str
+     """
     result = html_info.replace("__REPLACE_ANIMALS_INFO__", animal_info)
 
     return result
 
 
 def new_html_file(new_file_text: str):
-    """ Creates a new html file with the code we want to display to the user."""
+    """
+    Creates a new html file with the code we want to display to the user.
+    Args:
+        new_file_text: str
+    """
     with open("animals.html", "w") as new_file:
         new_file.write(new_file_text)
 
