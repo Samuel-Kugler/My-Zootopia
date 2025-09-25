@@ -2,6 +2,28 @@ import json
 from json import JSONDecodeError
 
 
+def error_html_template(error_type: str) -> str:
+    """
+    Holds a backup html file for error display.
+    Args:
+         error_type: str
+    return: str
+    """
+    html_emergency_file = (f"<!doctype html>"
+                           f"<html>"
+                           f"<head>"
+                           f"<meta charset='utf-8'>"
+                           f"<meta name='viewport' content='width=device-width, initial-scale=1'>"
+                           f"<title>Error!</title>"
+                           f"</head>"
+                           f"<body>"
+                           f"<h1><strong>{error_type}</strong></h1>"
+                           f"</body>"
+                           f"</html>")
+
+    return html_emergency_file
+
+
 def read_html_file() -> str:
     """
     Loads a html file template.
@@ -11,7 +33,9 @@ def read_html_file() -> str:
         with open("animals_template.html", "r") as html_file:
             content = html_file.read()
     except FileNotFoundError:
-        content =
+        content = error_html_template("The html template file is missing.")
+    except UnicodeDecodeError:
+        content = error_html_template("The file couldn't be encoded correctly.")
 
     return content
 
